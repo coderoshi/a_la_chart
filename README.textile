@@ -1,17 +1,23 @@
-a la Chart
-License: MIT
-Version: 0.1
-
-== a la Chart
+h1. a la Chart
 
 This is a general framework for inserting various type of charting implementations - from grabbing the
 data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).
 
-== Example
+h2. Supports
+
+Note: very much in development
+
+* Fusion Charts (partial)
+* Google Charts (partial)
+* gRaphaël (partial)
+
+h2. Install
 
 To install this plugin:
 
     script/plugin install git://github.com/coderoshi/a_la_chart.git
+
+h2. Examples
 
 
 Copyright (c) 2009 Mobi, released under the MIT license
