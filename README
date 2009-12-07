@@ -1,0 +1,14 @@
+ALaChart
+========
+
+This is a general framework for inserting various type of charting implementations - from grabbing the
+data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).
+
+
+Example
+=======
+
+
+
+
+Copyright (c) 2009 Mobi, released under the MIT license

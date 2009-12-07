@@ -1,0 +1,22 @@
+default: 3.0
+3.0:
+  angular:
+    data: 'angular.xml.builder'
+    chart_type: AngularGauge
+    inline: 'inline.html.erb'
+  bar:
+    data: 'bar.xml.builder'
+    chart_type: Bar2D
+    inline: 'inline.html.erb'
+  column:
+    data: 'column.xml.builder'
+    chart_type: Column2D
+    inline: 'inline.html.erb'
+  line:
+    data: 'line.xml.builder'
+    chart_type: Line2D
+    inline: 'inline.html.erb'
+  pie:
+    data: 'pie.xml.builder'
+    chart_type: Pie2D
+    inline: 'inline.html.erb'
