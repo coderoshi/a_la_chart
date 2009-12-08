@@ -22,7 +22,9 @@ class ActionController::Base
       
       # XXX: how can we use the ALaChart::InstanceMethods.render_style ?
       def render_style(chart_make, chart_type, chart_make_version=nil)
-        chart_make = chart_make.to_sym
+        unless !chart_make.nil? && (chart_make_config = a_la_chart_config[chart_make.to_sym])
+          raise "Unknown chart_make. Valid type are: #{a_la_chart_config.keys.map{|v|v.to_sym.inspect}.join(', ')}"
+        end
         
         chart_make_config = a_la_chart_config[chart_make]
         chart_make_version = chart_make_version || chart_make_config['default']
