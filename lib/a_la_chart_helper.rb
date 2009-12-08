@@ -1,7 +1,7 @@
 module ALaChartHelper
   require "erb"
   
-  def inline_chart(chart_make, chart_style, args={})
+  def chart_tag(chart_make, chart_style, args={})
     width = args[:width] || 400
     height = args[:height] || 300
     chart_make_version = args[:version]
