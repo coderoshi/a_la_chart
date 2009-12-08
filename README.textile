@@ -1,9 +1,8 @@
 h1. a la Chart
 
-This is a general framework for inserting various type of charting implementations - from grabbing the
-data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).
+This is a general framework for inserting various type of charting implementations - from grabbing the data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).
 
-h2. Supports
+h2. Support
 
 Note: very much in development
 
