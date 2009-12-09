@@ -51,23 +51,39 @@ module ALaChart
   module InstanceMethods
     include HelperMethods
     
-    def show
+    def provide_chart_data
+      chart_make = params[:chart_make]
+      chart_type = params[:id]
+      
+      chart_type_config, chart_make_version = nil, nil
+      if !chart_make.nil? && (chart_make_config = a_la_chart_config[chart_make.to_sym])
+        chart_make_version = chart_make_version || chart_make_config['default']
+        chart_make_config = chart_make_config[chart_make_version]
+        chart_type_config = chart_make_config[chart_type.to_s]
+      end
+      
+      return if chart_type_config.nil? || !respond_to?("set_chart_#{chart_type}")
+      
       respond_to do |format|
         # format.html # index.html.erb
-        format.xml { render_style params[:chart_make], params[:id] }
-        format.js { render_style params[:chart_make], params[:id] }
+        format.xml { render_style chart_make, chart_type, chart_make_version, chart_type_config }
+        format.js { render_style chart_make, chart_type, chart_make_version, chart_type_config }
       end
     end
 
   protected
 
-    def render_style(chart_make, chart_type, chart_make_version=nil)
-      chart_make = chart_make.to_sym
+    def render_style(chart_make, chart_type, chart_make_version=nil, chart_type_config=nil)
+      if chart_type_config.nil?
+        unless !chart_make.nil? && (chart_make_config = a_la_chart_config[chart_make.to_sym])
+          raise "Unknown chart_make. Valid type are: #{a_la_chart_config.keys.map{|v|v.to_sym.inspect}.join(', ')}"
+        end
+        
+        chart_make_version = chart_make_version || chart_make_config['default']
+        chart_make_config = chart_make_config[chart_make_version]
+        chart_type_config = chart_make_config[chart_type.to_s]
+      end
       
-      chart_make_config = a_la_chart_config[chart_make]
-      chart_make_version = chart_make_version || chart_make_config['default']
-      chart_make_config = chart_make_config[chart_make_version]
-      chart_type_config = chart_make_config[chart_type.to_s]
       data_template = chart_type_config['data']
       
       send "set_chart_#{chart_type}"
@@ -82,11 +98,9 @@ module ALaChart
   module ClassMethods
     
     def a_la_chart
-      require 'inherit_resources_chart'
-      
-      # a_la_chart_config
-      
       include ALaChart::InstanceMethods
+      
+      self.before_filter(:provide_chart_data, :only => [:show])
       
       # Namespace this stuff??
       [:data, :fields, :meta, :value, :a_la_chart_config, :set_chart].each do |method|
@@ -97,21 +111,6 @@ module ALaChart
         end_eval
       end
     end
-    
-    # def a_la_chart_config
-    #   unless defined?(@@alachart_config)
-    #     require 'yaml'
-    #     
-    #     @@alachart_config = {}
-    #     Dir.foreach(File.join(File.dirname(__FILE__), '..', 'configs')) do |dir|
-    #       config_path = File.join(File.dirname(__FILE__), '..', 'configs', dir, 'config.yml')
-    #       if File.exists?(config_path)
-    #         @@alachart_config[dir.to_sym] = YAML.load_file(config_path)
-    #       end
-    #     end
-    #   end
-    #   @@alachart_config
-    # end
     
     def chart(*types, &block)
       for type in types
