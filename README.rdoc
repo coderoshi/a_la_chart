@@ -1,8 +1,12 @@
-h1. a la Chart
+= a_la_chart
+
+* http://github.com/coderoshi/a_la_chart
+
+== DESCRIPTION:
 
 This is a general framework for inserting various type of charting implementations - from grabbing the data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).
 
-h2. Support
+== SUPPORT:
 
 Note: very much in development
 
@@ -10,13 +14,12 @@ Note: very much in development
 * Google Charts (partial)
 * gRaphaël (partial)
 
-h2. Install
+== INSTALL:
 
 To install this plugin:
 
     script/plugin install git://github.com/coderoshi/a_la_chart.git
 
-h2. Examples
-
+== LICENSE:
 
 Copyright (c) 2009 Mobi, released under the MIT license

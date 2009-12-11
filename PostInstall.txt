@@ -1,0 +1,7 @@
+
+For more information on a_la_chart, see http://a_la_chart.rubyforge.org
+
+NOTE: Change this information in PostInstall.txt 
+You can also delete it if you don't want it.
+
+

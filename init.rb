@@ -1,4 +1,1 @@
-ActionController::Base.class_eval do
-  include ALaChart
-end
-ActionView::Base.send :include, ALaChartHelper
+require File.join(File.dirname(__FILE__), 'lib', 'a_la_chart')

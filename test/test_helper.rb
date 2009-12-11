@@ -1,3 +1,3 @@
-require 'rubygems'
-require 'active_support'
-require 'active_support/test_case'
+require 'stringio'
+require 'test/unit'
+require File.dirname(__FILE__) + '/../lib/a_la_chart'
