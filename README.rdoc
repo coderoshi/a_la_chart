@@ -63,7 +63,7 @@ To declare the style of data returned, you call 'chart' with the style of chart 
 
 http://chart.apis.google.com/chart?cht=p&chd=t:6,5,3&chs=300x180&chl=Chicago|Indy|New%20York&.jpg
 
-If you imagine a pie chart, there will be two kinds of required data per slice: A value (how many people live in each city) and a label (what is the name of the city). meta points the two generic requirements (label and value) to specific methods in the returned objects (or key names, if an array of Hash objects are returned). ALC will effectively call "item.city" for each label.
+In a pie chart, there are two kinds of required data per slice: A value (how many people live in each city) and a label (what is the name of the city). meta points the two generic requirements (label and value) to specific methods in the returned objects (or key names, if an array of Hash objects are returned). ALC will effectively call "item.city" for each label.
 
 If your query does not return data which maps to a specific method or key, meta can also map requirements to procedure blocks (Proc.new, proc, or lambda) which procedurally extracts values from each item in the returned list of data values.
 
