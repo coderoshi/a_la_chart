@@ -4,19 +4,19 @@
 
 == DESCRIPTION:
 
-This is a general framework for inserting various type of charting implementations - from grabbing the data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).
+'a la Chart' (ALC) is a framework for managing various chart implementations - from grabbing the data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc), and finally rendering them. Note: ALC is very much in alpha development and not recommended for public use.
 
 == SUPPORT:
 
-Note: very much in development
+Note: very much in alpha development
 
-* Fusion Charts (partial)
-* Google Charts (partial)
-* gRaphaël (partial)
+* Google Charts 1.0 (partial)
+* Fusion Charts 3.x (partial)
+* gRaphaël 1.2 (partial)
 
 == INSTALL:
 
-It is recommended to install this as a gem from http://gemcutter.org/
+It is recommended to install this as a gem from http://gemcutter.org
 
     gem install a_la_chart
 
@@ -27,6 +27,49 @@ Set up the gem in your environment.rb
 OR - to install this directly as a Rails plugin (not recommended, but available):
 
     script/plugin install git://github.com/coderoshi/a_la_chart.git
+
+Once you have installed 'a la Chart', you can start creating charts immediately. Since Google Charts can function without any further install (it just hits a google URL to generate an image inline), you can technically use 'a la Chart' (ALC) without any further install - but that's also kind of boring. If you need to use another supported charting framework, such as Fusion Charts or gRaphaël, you must install them locally, as per their normal install instructions. This generally means placing the required files (javascript, flash) in your project's /public directory, and linking to them via html header tags in your relevant /app/views/layouts files.
+
+For example, in our project we use the gRaphaël dot chart, so populate our /app/views/layouts/reports.html.haml with this HAML javascript tag
+
+    = javascript_include_tag "raphael", "jquery", "g.raphael.js", "g.dot.js"
+
+We also use Fusion charts, and install them in a similar way (along with the necessary flash and javascript files under /public)
+
+    = javascript_include_tag "FusionCharts", "FusionMaps", "FusionChartsDOM"
+
+== USAGE:
+
+ALC logic is in two parts: controller and view. To activate a controller add the 'a_la_chart' directive
+
+  class PeopleController < ApplicationController
+    a_la_chart
+  end
+
+To declare the style of data returned, you call 'chart' with the style of chart (you can have more than one, eg. 'chart :pie, :line'). Within the chart directive, you return the list of data objects (Objects or Hashes), and finally a 'meta', which describes how to map each object to the relevant chart data. For example, we have a Person model, tied to a city name. We want to build a pie chart which counts the people in each city.
+
+  class PeopleController < ApplicationController
+    a_la_chart
+    
+    chart :pie do
+      data do
+        Person.all(:select => 'city, COUNT(people.*) as total', :group => 'city')
+      end
+      meta :label => :city, :value => :total
+    end
+  end
+
+If you imagine a pie chart, there will be two kinds of required data per slice: A value (how many people live in each city) and a label (what is the name of the city). meta points the two generic requirements (label and value) to specific methods in the returned objects (or key names, if an array of Hash objects are returned).
+
+If your query does not return data which maps to a specific method or key, meta can also map requirements to procedure blocks (Proc.new, proc, or lambda) which procedurally extracts values from each item in the returned list of data values.
+
+    chart :pie do
+      data do
+        Person.count(:group => :gender)
+      end
+      meta :label => lambda {|item| item[0].blank? ? "Unknown" : item[0] }, :value => proc {|item| item[1]}
+    end
+
 
 == LICENSE:
 
