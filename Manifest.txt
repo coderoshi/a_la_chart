@@ -1,7 +1,6 @@
 History.txt
 MIT-LICENSE
 Manifest.txt
-PostInstall.txt
 README.rdoc
 Rakefile
 configs/fusion/3.0/angular.xml.builder

@@ -35,7 +35,7 @@ module ALaChartHelper
     
     div_id = "#{name}_#{Time.now.to_f.to_s.gsub('.','_')}"
     
-    inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', 'configs', chart_make.to_s, chart_make_version.to_s, inline_template)))
+    inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, inline_template)))
     inline.result(binding)
   end
     

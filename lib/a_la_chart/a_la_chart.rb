@@ -37,8 +37,8 @@ module ALaChart
         require 'yaml'
         
         @@alachart_config = {}
-        Dir.foreach(File.join(File.dirname(__FILE__), '..', 'configs')) do |dir|
-          config_path = File.join(File.dirname(__FILE__), '..', 'configs', dir, 'config.yml')
+        Dir.foreach(File.join(File.dirname(__FILE__), '..', '..', 'configs')) do |dir|
+          config_path = File.join(File.dirname(__FILE__), '..', '..', 'configs', dir, 'config.yml')
           if File.exists?(config_path)
             @@alachart_config[dir.to_sym] = YAML.load_file(config_path)
           end
@@ -87,7 +87,7 @@ module ALaChart
       data_template = chart_type_config['data']
       
       send "set_chart_#{chart_type}"
-      render File.join(File.dirname(__FILE__), '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template)
+      render File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template)
     end
   end
   
