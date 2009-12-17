@@ -16,7 +16,15 @@ Note: very much in development
 
 == INSTALL:
 
-To install this plugin:
+It is recommended to install this as a gem from http://gemcutter.org/
+
+    gem install a_la_chart
+
+Set up the gem in your environment.rb
+
+  config.gem "a_la_chart", :source => "http://gemcutter.org"
+
+OR - to install this directly as a Rails plugin (not recommended, but available):
 
     script/plugin install git://github.com/coderoshi/a_la_chart.git
 
