@@ -119,7 +119,7 @@ What if we want to display the city data as a :bar chart? There are two options.
 
     chart :bar do
       data do
-        Person.all(:select => 'label, COUNT(people.*) as value', :group => 'city')
+        Person.all(:select => 'city as label, COUNT(people.*) as value', :group => 'city')
       end
     end
     
@@ -136,7 +136,7 @@ Then the view simply requests it.
 
 http://chart.apis.google.com/chart?chs=320x200&cht=bvs&chd=s:Paz&chxr=0,0,61&chxt=y&chxt=x,y&chxl=0:|NY|Indy|Chi|&.jpg
 
-Now you have two chart types. But suppose you want to show the same data in two ways. Since chart data can sometimes be fundamentally the same, deciding how to display the data is purely a view-level decision. For this case, you can declare multiple chart types in a single block. We will merge our charts together again.
+Now you have two chart types. But suppose you want to show the same data in two ways. Since chart data can sometimes be fundamentally the same, deciding how to display the data is purely a view-level decision. For this Second option, you can declare multiple chart types in a single block. We will merge our charts together again.
 
     chart :pie, :bar do
       data do
