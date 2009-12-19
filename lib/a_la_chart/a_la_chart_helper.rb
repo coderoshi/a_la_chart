@@ -20,16 +20,18 @@ module ALaChartHelper
     chart_type = chart_style.to_s if chart_type.blank?
     inline_template = chart_type_config['inline']
     
-    append_url = chart_type_config['url']
-    append_url = "#{chart_style.to_s}.xml" if append_url.blank?
-    url += "/#{append_url}?"
+    data_format = chart_type_config['format'] || chart_make_config['format']
+    
+    append_url = chart_type_config['url'] || ".chart#{data_format}"
+    url += "#{append_url}?"
     
     explicit_args = args[:args].present? ? params.merge(args[:args]) : params
     args.reject!{ |k,v| [:name,:width,:height,:base_url].include?(k) }
     args.merge!(explicit_args)
     # Can I do this? Or does it make me look like...
     args.reject!{ |k,v| ['action','controller'].include?(k) }
-    args[:chart_make] = chart_make
+    args[:cm] = chart_make.to_s
+    args[:ct] = chart_style.to_s
     
     url += args.to_param
     
@@ -38,7 +40,8 @@ module ALaChartHelper
     inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, inline_template)))
     inline.result(binding)
   end
-    
+  
+  # TODO: REMOVE all of this stuff... make this all external configurations
   def color_palette
     ["7BB465","B2B4B6","FEC35A","65A4B5","9E65B5","B57765","F7DF65","8F866C","B6A65F","C99D60","C1727A","8AABB9","65B584"]
   end

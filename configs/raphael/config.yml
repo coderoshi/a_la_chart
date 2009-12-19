@@ -1,8 +1,9 @@
 default: 1.2
 1.2:
+  format: js
   impact:
     data: 'impact.js.erb'
     inline: 'inline.html.erb'
-    url: 'impact.js'
+    # url: '.chartjs'
   dot:
     inline: 'dot.html.erb'

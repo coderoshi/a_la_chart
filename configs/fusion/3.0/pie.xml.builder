@@ -1,6 +1,7 @@
 xml.instruct!
 xml.chart(chart_options.merge(:caption => params[:title])) do
-  data.each do |record|
-    xml.set :value => value(record, :value), :label => value(record, :label), :color => next_color
+  the_case = params[:case]
+  data(the_case).each do |record|
+    xml.set :value => value(record, :value, the_case), :label => value(record, :label, the_case), :color => next_color
   end
 end

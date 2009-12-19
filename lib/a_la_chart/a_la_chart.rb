@@ -1,26 +1,32 @@
 module ALaChart
   
   module HelperMethods
-    def meta
-      @metadata ||= defined?(get_meta) ? get_meta : {}
+    def meta(the_case=nil)
+      if the_case.blank?
+        @metadata ||= defined?(get_meta) ? get_meta : {}
+      else
+        @metadata ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
+      end
     end
-
-    def fields
-      @fields ||= defined?(get_fields) ? get_fields : []
+    
+    def data(the_case=nil)
+      if the_case.blank?
+        @data ||= defined?(get_data) ? get_data : []
+      else
+        @data ||= respond_to?("get_data_#{the_case.to_s}") ? send("get_data_#{the_case.to_s}") : []
+      end
     end
-  
-    def data
-      @data ||= defined?(get_data) ? get_data : []
-    end
-  
-    def value(object, key)
+    
+    def value(object, key, the_case=nil)
       return '' if object.blank?
-    
+      
       # if there is a meta map, use it. else try the key itself
-      key_field = meta[key] || key
-    
+      key_field = meta(the_case)[key] || key
+      
       if key_field.class == Proc
         val = key_field.call(object)
+      elsif key_field.class == Fixnum
+        val = object[key_field] if object.respond_to?('[]')
       else
         val = object.respond_to?(key_field) ? object.send(key_field) : nil
         val = object[key_field] if object.respond_to?('[]')
@@ -52,8 +58,8 @@ module ALaChart
     include HelperMethods
     
     def provide_chart_data
-      chart_make = params[:chart_make]
-      chart_type = params[:id]
+      chart_make = params[:cm]
+      chart_type = params[:ct]
       
       chart_type_config, chart_make_version = nil, nil
       if !chart_make.nil? && (chart_make_config = a_la_chart_config[chart_make.to_sym])
@@ -65,9 +71,9 @@ module ALaChart
       return if chart_type_config.nil? || !respond_to?("set_chart_#{chart_type}")
       
       respond_to do |format|
-        # format.html # index.html.erb
-        format.xml { render_style chart_make, chart_type, chart_make_version, chart_type_config }
-        format.js { render_style chart_make, chart_type, chart_make_version, chart_type_config }
+        format.chartxml  { render_style(chart_make, chart_type, chart_make_version, chart_type_config) }
+        format.chartjs   { render_style(chart_make, chart_type, chart_make_version, chart_type_config) }
+        format.chartjson { render_style(chart_make, chart_type, chart_make_version, chart_type_config) }
       end
     end
 
@@ -100,7 +106,10 @@ module ALaChart
     def a_la_chart
       include ALaChart::InstanceMethods
       
-      self.before_filter(:provide_chart_data, :only => [:show])
+      # TODO: We should ensure this is for inherited_resources
+      self.respond_to(:chartxml, :chartjs, :chartjson) if defined?(self.respond_to)
+      
+      self.before_filter(:provide_chart_data, :only => [:index, :show])
       
       # Namespace this stuff??
       [:data, :fields, :meta, :value, :a_la_chart_config, :set_chart].each do |method|
@@ -120,19 +129,44 @@ module ALaChart
       end
     end
   
-    def data(&block)
-      define_method("get_data") do
-        # note: instance_eval binds scope variables, call does not
-        instance_eval(&block) || []
-        # block.call(binding)
+    def data(*attrs, &block)
+      if attrs.size == 1
+        attrs = attrs[0]
+        if attrs.class == Hash
+          options = attrs
+        elsif attrs.class == Symbol || attrs.class == String
+          cases = [attrs]
+        end
+      elsif attrs.size > 1
+        cases = attrs[0...-1]
+        options = attrs[-1]
       end
-    end
-  
-    def fields(*attrs)
-      field_ary = attrs.map{|d| d.to_sym }
-    
-      define_method("get_fields") do
-        field_ary
+      
+      cases ||= []
+      options ||= {}
+      
+      if cases.blank?
+        define_method("get_data") do
+          # note: instance_eval binds scope variables, call does not
+          instance_eval(&block) || []
+          # block.call(binding)
+        end
+        unless options.blank?
+          define_method("get_meta") do
+            options
+          end
+        end
+      else
+        cases.each { |caze|
+          define_method("get_data_#{caze}") do
+            # note: instance_eval binds scope variables, call does not
+            instance_eval(&block) || []
+            # block.call(binding)
+          end
+          define_method("get_meta_#{caze}") do
+            options
+          end
+        }
       end
     end
   

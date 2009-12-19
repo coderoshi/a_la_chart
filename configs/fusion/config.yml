@@ -1,5 +1,6 @@
 default: 3.0
 3.0:
+  format: xml
   angular:
     data: 'angular.xml.builder'
     chart_type: AngularGauge
