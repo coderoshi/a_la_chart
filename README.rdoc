@@ -134,7 +134,7 @@ Then the view simply requests it.
   = chart_tag :google, :bar
   = chart_tag :google, :pie
 
-http://chart.apis.google.com/chart?chs=320x120&cht=bhs&chd=s:Paz&chxr=0,0,61&chxt=y,x&chxl=0:|New%20York|Indy|Chicago|&.jpg
+http://chart.apis.google.com/chart?chs=320x120&cht=bhs&chd=s:Zxz&chxr=0,0,61&chxt=y,x&chxl=0:|Indy|Chicago|New%20York|&.jpg
 
 Now you have two chart types. But suppose you want to show the same data in two ways. Since chart data can sometimes be fundamentally the same, deciding how to display the data is purely a view-level decision. For this Second option, you can declare multiple chart types in a single block. We will merge our charts together again.
 
