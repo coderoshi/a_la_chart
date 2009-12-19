@@ -49,37 +49,35 @@ ALC logic is in two parts: controller and view. To activate a controller add the
 
 === Data and Mapping
 
-To declare the style of data returned, you call 'chart' with the style of chart (you can have more than one, eg. 'chart :pie, :line'). Within the chart directive, you return the list of data objects (Objects or Hashes), and finally a 'meta', which describes how to map each object to the relevant chart data. For example, we have a Person model, tied to a city name. We want to build a pie chart which counts the people in each city.
+To declare the style of data returned, you call 'chart' with the style of chart (you can have more than one, eg. 'chart :pie, :line'). Within the chart directive, you return the list of 'data' objects (Objects or Hashes). You pass in a Hash which describes how to map each object to the relevant chart data. For example, we have a Person model, tied to a city name. We want to build a pie chart which counts the people in each city.
 
   class PeopleController < ApplicationController
     a_la_chart
     
     chart :pie do
-      data do
+      data(:label => :city, :value => :total) do
         Person.all(:select => 'city, COUNT(people.*) as total', :group => 'city')
       end
-      meta :label => :city, :value => :total
     end
   end
 
 http://chart.apis.google.com/chart?cht=p&chd=t:6,5,3&chs=300x180&chl=Chicago|Indy|New%20York&.jpg
 
-In a pie chart, there are two kinds of required data per slice: A value (how many people live in each city) and a label (what is the name of the city). meta points the two generic requirements (label and value) to specific methods in the returned objects (or key names, if an array of Hash objects are returned). ALC will effectively call "item.city" for each label.
+In a pie chart, there are two kinds of required data per slice: A value (how many people live in each city) and a label (what is the name of the city). The data Hash points the two generic requirements (:label and :value) to specific methods in the returned objects (or key names, if an array of Hash objects are returned). When generating the chart data, ALC will effectively call "item.city" for each label, and "item.total" for each value.
 
-If your query does not return data which maps to a specific method or key, meta can also map requirements to procedure blocks (Proc.new, proc, or lambda) which procedurally extracts values from each item in the returned list of data values.
+If your query does not return data which maps to a specific method or key, you can also map requirements to procedure blocks (Proc.new, proc, or lambda) which procedurally extracts values from each item in the returned list of data values, or integers which point to Array positions.
 
     chart :pie do
-      data do
+      data(:label => proc{|item| item[0].blank? ? 'Unknown' : item[0]}, :value => 1) do
         Person.count(:group => :gender)
       end
-      meta :label => proc{|item| item[0].blank? ? 'Unknown' : item[0] }, :value => 1
     end
 
-ALC will effectively call "item[0].blank? ? 'Unknown' : item[0]" for each label.
+ALC will effectively call "item[0].blank? ? 'Unknown' : item[0]" to create each label, and "item[1]" for each value.
 
 === View Chart
 
-Note that we have yet to define the type of charting engine we wish to use. Since that is a view-level decision, we will place that in the view. Before continuing, let us assume you wish to display a report page with a table of people information - alongside the pie chart which displays the count of people per city.
+We have yet to define the type of charting engine we wish to use. Since that is a view-level decision, we will place that in the view. Before continuing, let us assume you wish to display a report page with a table of people information - alongside two pie charts. One which displays the count of people per city, and another which displays their genders.
 
 To start, create a "def index" in the PeopleController which returns the list of people, as you normally would.
 
@@ -87,10 +85,12 @@ To start, create a "def index" in the PeopleController which returns the list of
     a_la_chart
     
     chart :pie do
-      data do
+      data :label => :city, :value => :total do
         Person.all(:select => 'city, COUNT(people.*) as total', :group => 'city')
       end
-      meta :label => :city, :value => :total
+      data :gender, :label => proc{|item| item[0].blank? ? 'Unknown' : item[0]}, :value => 1 do
+        Person.count(:group => :gender)
+      end
     end
     
     def index
@@ -101,6 +101,7 @@ To start, create a "def index" in the PeopleController which returns the list of
 The corresponding index.html.haml (or index.html.erb, or whatever) will look something like this
 
   = chart_tag :google, :pie
+  = chart_tag :google, :pie, :case => :gender
   %table
     %tr
       %th Name
@@ -110,7 +111,50 @@ The corresponding index.html.haml (or index.html.erb, or whatever) will look som
         %td&= person.name
         %td&= person.city
 
-Except for the chart_tag, it's pretty normal. Here we pass in the minimum required fields for chart_tag: the chart implementation (:google, :fusion, :raphael are the first to be supported, more to come), and the chart type (dependent on the implementation, see a_la_chart/configs/*/config.yml for the lists). Certain configs are supported by all implementations, such as :width and :height.
+Except for chart_tag, it's pretty normal. In the first chart we pass in the minimum required fields for chart_tag: the chart implementation (:google, :fusion, :raphael are the first to be supported, more to come), and the chart type (dependent on the implementation, see a_la_chart/configs/*/config.yml for the lists). The second pie chart is populated with the :gender pie data. ":case" is how we can support several styles of data for a single type of chart.
+
+== Multiple Chart Support
+
+What if we want to display the city data as a :bar chart? There are two options. The first option, we can move the city data to a separate chart block. You can have as many chart blocks in a single controller as supported types.
+
+    chart :bar do
+      data :label => :city, :value => :total do
+        Person.all(:select => 'city, COUNT(people.*) as total', :group => 'city')
+      end
+    end
+    
+    chart :pie do
+      data :label => proc{|item| item[0].blank? ? 'Unknown' : item[0]}, :value => 1 do
+        Person.count(:group => :gender)
+      end
+    end
+
+Then the view simply requests it.
+
+  = chart_tag :google, :bar
+  = chart_tag :google, :pie
+
+http://chart.apis.google.com/chart?chs=320x200&cht=bvs&chd=s:Paz&chxr=0,0,61&chxt=y&chxt=x,y&chxl=0:|NY|Indy|Chi|&.jpg
+
+Now you have two chart types. But suppose you want to show the same data in two ways. Since data can be fundamentally computed the same, deciding how to display the data should be purely a view-level decision. For this case, you can declare multiple chart types in a single block. We will merge our charts together again.
+
+    chart :pie, :bar do
+      data :label => :city, :value => :total do
+        Person.all(:select => 'city, COUNT(people.*) as total', :group => 'city')
+      end
+      data :gender, :label => proc{|item| item[0].blank? ? 'Unknown' : item[0]}, :value => 1 do
+        Person.count(:group => :gender)
+      end
+    end
+
+And in the view
+
+    = chart_tag :google, :bar
+    = chart_tag :google, :pie, :case => :gender
+
+=== More View Chart Config
+
+The above example shows the minimum configs required. However, certain configs are supported by all implementations, such as :width and :height.
 
   = chart_tag :fusion, :angular, :height => 300, :width => 300, :title => 'My Angular Chart'
 
