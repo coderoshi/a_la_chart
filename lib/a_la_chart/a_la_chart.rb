@@ -18,18 +18,20 @@ module ALaChart
     end
     
     def value(object, key, the_case=nil)
-      return '' if object.blank?
+      return '' if object.blank? || key.blank?
       
       # if there is a meta map, use it. else try the key itself
       key_field = meta(the_case)[key] || key
+      
+      return '' if key_field.blank?
       
       if key_field.class == Proc
         val = key_field.call(object)
       elsif key_field.class == Fixnum
         val = object[key_field] if object.respond_to?('[]')
       else
-        val = object.respond_to?(key_field) ? object.send(key_field) : nil
         val = object[key_field] if object.respond_to?('[]')
+        val = (object.respond_to?(key_field) ? object.send(key_field) : nil) if val.nil?
         val
       end
     end

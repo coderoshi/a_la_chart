@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{a_la_chart}
-  s.version = "0.0.3"
+  s.version = "0.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Eric Redmond"]
-  s.date = %q{2009-12-17}
+  s.date = %q{2009-12-23}
   s.description = %q{This is a general framework for inserting various type of charting implementations - from grabbing the data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc).}
   s.email = ["eric.redmond@gmail.com"]
   s.extra_rdoc_files = ["History.txt", "Manifest.txt"]
