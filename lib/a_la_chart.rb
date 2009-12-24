@@ -1,5 +1,5 @@
 module ALaChart
-  VERSION = '0.0.6'
+  VERSION = '0.0.7'
 end
 
 require File.join(File.dirname(__FILE__), 'a_la_chart', 'a_la_chart')

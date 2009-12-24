@@ -21,3 +21,7 @@ default: 3.0
     data: 'pie.xml.builder'
     chart_type: Pie2D
     inline: 'inline.html.erb'
+  stacked_column:
+    data: 'stacked_column.xml.builder'
+    chart_type: StackedColumn2D
+    inline: 'inline.html.erb'
