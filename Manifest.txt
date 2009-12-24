@@ -9,6 +9,7 @@ configs/fusion/3.0/column.xml.builder
 configs/fusion/3.0/inline.html.erb
 configs/fusion/3.0/line.xml.builder
 configs/fusion/3.0/pie.xml.builder
+configs/fusion/3.0/stacked_column.xml.builder
 configs/fusion/config.yml
 configs/google/1.0/pie.html.erb
 configs/google/config.yml

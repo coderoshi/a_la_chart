@@ -1,3 +1,8 @@
+=== 0.0.8 2009-12-24
+
+* 1 major enhancement:
+  * added stacked chart impl for fusion charts
+
 === 0.0.3 2009-12-18
 
 * 1 major enhancement:
