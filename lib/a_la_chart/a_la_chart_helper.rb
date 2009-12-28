@@ -16,9 +16,10 @@ module ALaChartHelper
     
     chart_type_config = chart_make_config[chart_style.to_s]
     raise "#{chart_style.to_s} is an unsupported chart style" if chart_type_config.blank?
-    chart_type = chart_type_config['chart_type']
-    chart_type = chart_style.to_s if chart_type.blank?
     inline_template = chart_type_config['inline']
+    remote_template = chart_type_config['remote']
+    
+    template = args[:inline] ? inline_template : remote_template || inline_template
     
     data_format = chart_type_config['format'] || chart_make_config['format']
     
@@ -37,7 +38,10 @@ module ALaChartHelper
     
     div_id = "#{name}_#{Time.now.to_f.to_s.gsub('.','_')}"
     
-    inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, inline_template)))
+    data_template = chart_type_config['data']
+    data_template = File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template) if data_template.present?
+    
+    inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, template)))
     inline.result(binding)
   end
   

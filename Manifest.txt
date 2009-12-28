@@ -5,10 +5,17 @@ README.rdoc
 Rakefile
 configs/fusion/3.0/angular.xml.builder
 configs/fusion/3.0/bar.xml.builder
+configs/fusion/3.0/bullet.xml.builder
 configs/fusion/3.0/column.xml.builder
+configs/fusion/3.0/funnel.xml.builder
 configs/fusion/3.0/inline.html.erb
 configs/fusion/3.0/line.xml.builder
 configs/fusion/3.0/pie.xml.builder
+configs/fusion/3.0/pyramid.xml.builder
+configs/fusion/3.0/remote.html.erb
+configs/fusion/3.0/spark_column.xml.builder
+configs/fusion/3.0/spark_line.xml.builder
+configs/fusion/3.0/spark_win_loss.xml.builder
 configs/fusion/3.0/stacked_column.xml.builder
 configs/fusion/config.yml
 configs/google/1.0/pie.html.erb
