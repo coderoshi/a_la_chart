@@ -3,11 +3,11 @@ module ALaChart
   module HelperMethods
     def meta(the_case=nil)
       if the_case.blank?
-        # (@metadata ||= {})['_'] ||= defined?(get_meta) ? get_meta : {}
-        @metadata ||= defined?(get_meta) ? get_meta : {}
+        (@metadata ||= {})['_'] ||= defined?(get_meta) ? get_meta : {}
+        # @metadata ||= defined?(get_meta) ? get_meta : {}
       else
-        # (@metadata ||= {})[the_case] ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
-        @metadata ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
+        (@metadata ||= {})[the_case] ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
+        # @metadata ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
       end
     end
     
@@ -31,7 +31,7 @@ module ALaChart
         val = key_field.call(object)
       elsif key_field.class == Fixnum
         val = object[key_field] if object.respond_to?('[]')
-      else
+      elsif object.class != Array
         val = object[key_field] if object.respond_to?('[]')
         val = (object.respond_to?(key_field) ? object.send(key_field) : nil) if val.nil?
         val
