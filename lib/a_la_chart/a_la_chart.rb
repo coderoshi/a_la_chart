@@ -3,17 +3,19 @@ module ALaChart
   module HelperMethods
     def meta(the_case=nil)
       if the_case.blank?
+        # (@metadata ||= {})['_'] ||= defined?(get_meta) ? get_meta : {}
         @metadata ||= defined?(get_meta) ? get_meta : {}
       else
+        # (@metadata ||= {})[the_case] ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
         @metadata ||= respond_to?("get_meta_#{the_case.to_s}") ? send("get_meta_#{the_case.to_s}") : []
       end
     end
     
     def data(the_case=nil)
       if the_case.blank?
-        @data ||= defined?(get_data) ? get_data : []
+        (@data ||= {})['_'] ||= defined?(get_data) ? get_data : []
       else
-        @data ||= respond_to?("get_data_#{the_case.to_s}") ? send("get_data_#{the_case.to_s}") : []
+        (@data ||= {})[the_case] ||= respond_to?("get_data_#{the_case.to_s}") ? send("get_data_#{the_case.to_s}") : []
       end
     end
     
@@ -130,7 +132,7 @@ module ALaChart
         end
       end
     end
-  
+    
     def data(*attrs, &block)
       if attrs.size == 1
         attrs = attrs[0]

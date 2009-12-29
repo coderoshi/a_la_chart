@@ -8,8 +8,8 @@
   
   set_chart(chart_style)
   
-  xml = Builder::XmlMarkup.new(:target=>$stdout, :indent=>2) #Builder::XmlMarkup.new() #File.join(File.dirname(__FILE__), data_template))
-
+  # TODO: create a seperate 'params' override
+  params[:case] = args[:case]
   params[:title] = args[:title]
 %>
 <div>
@@ -21,8 +21,7 @@
                 registerWithJS="1" 
                 debugMode="0">
     <data><!--[CDATA[
-      <%# load data_template, true %>
-      <% eval(File.read(data_template), binding) %>
+      <%= render :file => data_template %>
     ]]--></data>
   </fusioncharts>
 </div>
