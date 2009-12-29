@@ -142,8 +142,12 @@ module ALaChart
           cases = [attrs]
         end
       elsif attrs.size > 1
-        cases = attrs[0...-1]
-        options = attrs[-1]
+        if attrs[-1].class == Hash
+          cases = attrs[0...-1]
+          options = attrs[-1]
+        else
+          cases = attrs[0..-1]
+        end
       end
       
       cases ||= []
