@@ -1,3 +1,9 @@
+=== 0.0.10 2009-12-29
+
+* 2 major enhancement:
+  * added support for inlining fusion chart data
+  * added support for 3D fusion charts
+
 === 0.0.8 2009-12-24
 
 * 1 major enhancement:
