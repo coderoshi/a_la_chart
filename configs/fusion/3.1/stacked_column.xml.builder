@@ -1,5 +1,5 @@
 xml.instruct!
-xml.chart(chart_options.merge(:caption => params[:title])) do
+xml.chart(chart_options.merge(:caption => params[:title], :showLegend => '0')) do
   the_case = params[:case]
   xml.categories do
     data(the_case).map{|record| value(record, :label, the_case) }.uniq.compact.each do |label|
