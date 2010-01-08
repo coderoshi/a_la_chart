@@ -42,19 +42,38 @@ module ALaChart
       send "set_chart_#{chart_type}"
     end
     
-    def a_la_chart_config
-      unless defined?(@@alachart_config)
+    def ALaChart.config
+      if ALaChart::Config.data.blank? #defined?(@@alachart_config)
         require 'yaml'
         
-        @@alachart_config = {}
+        def self.symbolize_keys!(yaml_data)
+          if yaml_data.is_a?(Hash)
+            yaml_data.each do |k,v|
+              unless k.is_a?(Symbol)
+                yaml_data[k.to_sym] = yaml_data.delete(k)
+              end
+              if v.is_a?(Array)
+                v.each {|e| self.symbolize_keys!(e) }
+              else
+                self.symbolize_keys!(v)
+              end
+            end
+          end
+        end
+        
+        data = ALaChart::Config.data
         Dir.foreach(File.join(File.dirname(__FILE__), '..', '..', 'configs')) do |dir|
           config_path = File.join(File.dirname(__FILE__), '..', '..', 'configs', dir, 'config.yml')
           if File.exists?(config_path)
-            @@alachart_config[dir.to_sym] = YAML.load_file(config_path)
+            make = dir.to_sym
+            yaml_data = YAML.load_file(config_path)
+            # Deep clone the yaml data
+            data[make] = Marshal::load(Marshal.dump(yaml_data))
+            self.symbolize_keys!(data[make])
           end
         end
       end
-      @@alachart_config
+      ALaChart::Config.data
     end
   end
   
@@ -66,10 +85,10 @@ module ALaChart
       chart_type = params[:ct]
       
       chart_type_config, chart_make_version = nil, nil
-      if !chart_make.nil? && (chart_make_config = a_la_chart_config[chart_make.to_sym])
-        chart_make_version = chart_make_version || chart_make_config['default']
-        chart_make_config = chart_make_config[chart_make_version]
-        chart_type_config = chart_make_config[chart_type.to_s]
+      if !chart_make.nil? && (chart_make_config = ALaChart.config[chart_make.to_sym])
+        chart_make_version = chart_make_version || chart_make_config[:default]
+        chart_make_config = chart_make_version.nil? ? nil : chart_make_config[chart_make_version.to_sym]
+        chart_type_config = chart_make_config.nil? || chart_type.nil? ? nil : chart_make_config[chart_type.to_sym]
       end
       
       return if chart_type_config.nil? || !respond_to?("set_chart_#{chart_type}")
@@ -85,16 +104,16 @@ module ALaChart
 
     def render_style(chart_make, chart_type, chart_make_version=nil, chart_type_config=nil)
       if chart_type_config.nil?
-        unless !chart_make.nil? && (chart_make_config = a_la_chart_config[chart_make.to_sym])
-          raise "Unknown chart_make. Valid type are: #{a_la_chart_config.keys.map{|v|v.to_sym.inspect}.join(', ')}"
+        unless !chart_make.nil? && (chart_make_config = ALaChart.config[chart_make.to_sym])
+          raise "Unknown chart_make. Valid type are: #{ALaChart.config.keys.map{|v|v.to_sym.inspect}.join(', ')}"
         end
         
-        chart_make_version = chart_make_version || chart_make_config['default']
-        chart_make_config = chart_make_config[chart_make_version]
-        chart_type_config = chart_make_config[chart_type.to_s]
+        chart_make_version = chart_make_version || chart_make_config[:default]
+        chart_make_config = chart_make_version.nil? ? nil : chart_make_config[chart_make_version.to_sym]
+        chart_type_config = chart_make_config.nil? || chart_type.nil? ? {} : chart_make_config[chart_type.to_sym]
       end
       
-      data_template = chart_type_config['data']
+      data_template = chart_type_config[:data]
       
       send "set_chart_#{chart_type}"
       render File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template)
@@ -116,7 +135,7 @@ module ALaChart
       self.before_filter(:provide_chart_data, :only => [:index, :show])
       
       # Namespace this stuff??
-      [:data, :fields, :meta, :value, :a_la_chart_config, :set_chart].each do |method|
+      [:data, :fields, :meta, :value, :set_chart].each do |method|
         master_helper_module.module_eval <<-end_eval
           def #{method}(*args, &block)                    # def current_user(*args, &block)
             controller.send(%(#{method}), *args, &block)  #   controller.send(%(current_user), *args, &block)

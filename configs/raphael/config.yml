@@ -1,5 +1,5 @@
-default: 1.2
-1.2:
+default: v1_2
+v1_2:
   format: js
   impact:
     data: 'impact.js.erb'

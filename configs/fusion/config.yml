@@ -1,5 +1,5 @@
-default: 3.1
-3.1:
+default: v3_1
+v3_1:
   format: xml
   angular:
     data: 'angular.xml.builder'
@@ -9,7 +9,7 @@ default: 3.1
   bar:
     data: 'bar.xml.builder'
     chart_type: Bar2D
-    3d: Bar3D
+    d3: Bar3D
     remote: 'remote.html.erb'
     inline: 'inline.html.erb'
   bullet:
@@ -21,25 +21,25 @@ default: 3.1
   column:
     data: 'column.xml.builder'
     chart_type: Column2D
-    3d: Column3D
+    d3: Column3D
     remote: 'remote.html.erb'
     inline: 'inline.html.erb'
   line:
     data: 'line.xml.builder'
     chart_type: Line2D
-    3d: Line3D
+    d3: Line3D
     remote: 'remote.html.erb'
     inline: 'inline.html.erb'
   pie:
     data: 'pie.xml.builder'
     chart_type: Pie2D
-    3d: Pie3D
+    d3: Pie3D
     remote: 'remote.html.erb'
     inline: 'inline.html.erb'
   stacked_column:
     data: 'stacked_column.xml.builder'
     chart_type: StackedColumn2D
-    3d: StackedColumn3D
+    d3: StackedColumn3D
     remote: 'remote.html.erb'
     inline: 'inline.html.erb'
   spark_line:

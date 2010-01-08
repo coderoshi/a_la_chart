@@ -10,20 +10,20 @@ module ALaChartHelper
     
     chart_make = chart_make.to_sym
     
-    chart_make_config = a_la_chart_config[chart_make]
-    chart_make_version = chart_make_version || chart_make_config['default']
-    chart_make_config = chart_make_config[chart_make_version]
+    chart_make_config = ALaChart.config[chart_make]
+    chart_make_version = chart_make_version || chart_make_config[:default]
+    chart_make_config = chart_make_config[chart_make_version.to_sym]
     
-    chart_type_config = chart_make_config[chart_style.to_s]
+    chart_type_config = chart_make_config[chart_style.to_sym]
     raise "#{chart_style.to_s} is an unsupported chart style" if chart_type_config.blank?
-    inline_template = chart_type_config['inline']
-    remote_template = chart_type_config['remote']
+    inline_template = chart_type_config[:inline]
+    remote_template = chart_type_config[:remote]
     
     template = args[:inline] ? inline_template : remote_template || inline_template
     
-    data_format = chart_type_config['format'] || chart_make_config['format']
+    data_format = chart_type_config[:format] || chart_make_config[:format]
     
-    append_url = chart_type_config['url'] || ".chart#{data_format}"
+    append_url = chart_type_config[:url] || ".chart#{data_format}"
     url += "#{append_url}?"
     
     explicit_args = args[:args].present? ? params.merge(args[:args]) : params
@@ -38,7 +38,7 @@ module ALaChartHelper
     
     div_id = "#{name}_#{Time.now.to_f.to_s.gsub('.','_')}"
     
-    data_template = chart_type_config['data']
+    data_template = chart_type_config[:data]
     data_template = File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template) if data_template.present?
     
     inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, template)))

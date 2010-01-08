@@ -1,4 +1,4 @@
-default: 1.0
-1.0:
+default: v1_0
+v1_0:
   pie:
     inline: 'pie.html.erb'
