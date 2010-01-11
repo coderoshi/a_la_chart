@@ -41,40 +41,6 @@ module ALaChart
     def set_chart(chart_type)
       send "set_chart_#{chart_type}"
     end
-    
-    def ALaChart.config
-      if ALaChart::Config.data.blank? #defined?(@@alachart_config)
-        require 'yaml'
-        
-        def self.symbolize_keys!(yaml_data)
-          if yaml_data.is_a?(Hash)
-            yaml_data.each do |k,v|
-              unless k.is_a?(Symbol)
-                yaml_data[k.to_sym] = yaml_data.delete(k)
-              end
-              if v.is_a?(Array)
-                v.each {|e| self.symbolize_keys!(e) }
-              else
-                self.symbolize_keys!(v)
-              end
-            end
-          end
-        end
-        
-        data = ALaChart::Config.data
-        Dir.foreach(File.join(File.dirname(__FILE__), '..', '..', 'configs')) do |dir|
-          config_path = File.join(File.dirname(__FILE__), '..', '..', 'configs', dir, 'config.yml')
-          if File.exists?(config_path)
-            make = dir.to_sym
-            yaml_data = YAML.load_file(config_path)
-            # Deep clone the yaml data
-            data[make] = Marshal::load(Marshal.dump(yaml_data))
-            self.symbolize_keys!(data[make])
-          end
-        end
-      end
-      ALaChart::Config.data
-    end
   end
   
   module InstanceMethods
@@ -85,7 +51,7 @@ module ALaChart
       chart_type = params[:ct]
       
       chart_type_config, chart_make_version = nil, nil
-      if !chart_make.nil? && (chart_make_config = ALaChart.config[chart_make.to_sym])
+      if !chart_make.nil? && (chart_make_config = ALaChart::Config[chart_make])
         chart_make_version = chart_make_version || chart_make_config[:default]
         chart_make_config = chart_make_version.nil? ? nil : chart_make_config[chart_make_version.to_sym]
         chart_type_config = chart_make_config.nil? || chart_type.nil? ? nil : chart_make_config[chart_type.to_sym]
@@ -104,8 +70,8 @@ module ALaChart
 
     def render_style(chart_make, chart_type, chart_make_version=nil, chart_type_config=nil)
       if chart_type_config.nil?
-        unless !chart_make.nil? && (chart_make_config = ALaChart.config[chart_make.to_sym])
-          raise "Unknown chart_make. Valid type are: #{ALaChart.config.keys.map{|v|v.to_sym.inspect}.join(', ')}"
+        unless !chart_make.nil? && (chart_make_config = ALaChart::Config[chart_make])
+          raise "Unknown chart_make. Valid type are: #{ALaChart::Config.keys.map{|v|v.inspect}.join(', ')}"
         end
         
         chart_make_version = chart_make_version || chart_make_config[:default]

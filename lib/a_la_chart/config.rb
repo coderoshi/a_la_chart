@@ -1,102 +1,67 @@
 module ALaChart
   module Config
     
-    def self.data
+    # Internally, this config is represented as:
+    #  config = {
+    #    :fusion => {
+    #      :default => :v31,
+    #      :v3_1 => {
+    #        :format => 'xml',
+    #        :pie => {
+    #          :data => 'pie.xml.builder',
+    #          :chart_type => 'Pie2D',
+    #          :remote => 'remote.html.erb',
+    #          :inline => 'inline.html.erb'
+    #        }
+    #      }
+    #    }
+    #  }
+    # Internal configs can be overridden in rails environment configs. For example,
+    # to use a custom :inline ERB template (paths are based on RAILS_ROOT):
+    # 
+    #  ALaChart::Config[:fusion][:v3_1][:pie][:data] = 'app/views/reports/a_la_chart/custom_inline.html.erb'
+    # 
+    # Then just copy the original template from the gem config dir, and make the desired changes
+    def self.config
+      unless defined?(@@data)
+        require 'yaml'
+        
+        def self.symbolize_keys!(yaml_data)
+          if yaml_data.is_a?(Hash)
+            yaml_data.each do |k,v|
+              unless k.is_a?(Symbol)
+                yaml_data[k.to_sym] ||= yaml_data.delete(k)
+              end
+              if v.is_a?(Array)
+                v.each {|e| self.symbolize_keys!(e) }
+              else
+                self.symbolize_keys!(v)
+              end
+            end
+          end
+        end
+        
+        @@data = {}
+        Dir.foreach(File.join(File.dirname(__FILE__), '..', '..', 'configs')) do |dir|
+          config_path = File.join(File.dirname(__FILE__), '..', '..', 'configs', dir, 'config.yml')
+          if File.exists?(config_path)
+            make = dir.to_sym
+            yaml_data = YAML.load_file(config_path)
+            # Deep clone the yaml data
+            @@data[make] = Marshal::load(Marshal.dump(yaml_data))
+            self.symbolize_keys!(@@data[make])
+          end
+        end
+      end
       @@data
     end
-    @@data = {}
     
-    def self.makes
-      @@makes
+    def self.[](make)
+      self.config[make.to_sym]
     end
-    @@makes = {}
     
-    # @@fusion = {
-    #   # :default => :v31,
-    #   :v3_1 => {
-    #     :format => 'xml',
-    #     :angular => {
-    #       :data => 'angular.xml.builder',
-    #       :chart_type => 'AngularGauge',
-    #       :remote => 'remote.html.erb',
-    #       :inline => 'inline.html.erb'
-    #     },
-    #     # :bar => {
-    #     #   :data => 'bar.xml.builder',
-    #     #   :chart_type => 'Bar2D',
-    #     #   :d3 => 'Bar3D',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :bullet => {
-    #     #   :data => 'bullet.xml.builder',
-    #     #   :chart_type => 'HBullet',
-    #     #   :vertical => 'VBullet',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :column => {
-    #     #   data: 'column.xml.builder',
-    #     #   :chart_type => 'Column2D'
-    #     #   :d3 => 'Column3D',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :line => {
-    #     #   :data => 'line.xml.builder',
-    #     #   :chart_type => 'Line2D',
-    #     #   :d3 => 'Line3D',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :pie => {
-    #     #   :data => 'pie.xml.builder',
-    #     #   :chart_type => 'Pie2D',
-    #     #   :d3 => 'Pie3D',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :stacked_column => {
-    #     #   :data => 'stacked_column.xml.builder',
-    #     #   :chart_type => 'StackedColumn2D',
-    #     #   :d3 => 'StackedColumn3D',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :spark_line => {
-    #     #   :data => 'spark_line.xml.builder',
-    #     #   :chart_type => 'SparkLine',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :spark_column => {
-    #     #   :data => 'spark_column.xml.builder',
-    #     #   :chart_type => 'SparkColumn',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :spark_win_loss => {
-    #     #   :data => 'spark_win_loss.xml.builder',
-    #     #   :chart_type => 'SparkWL',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :pyramid => {
-    #     #   :data => 'pyramid.xml.builder',
-    #     #   :chart_type => 'Pyramid',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # },
-    #     # :funnel => {
-    #     #   :data => 'funnel.xml.builder',
-    #     #   :chart_type => 'Funnel',
-    #     #   :remote => 'remote.html.erb',
-    #     #   :inline => 'inline.html.erb'
-    #     # }
-    #   }
-    # }
+    def self.keys
+      self.config.keys
+    end
   end
 end
-
-# ALaChart::Config.fusion[:v31][:format][:angular][:data]
-# ALaChart::Config.makes = [:fusion]

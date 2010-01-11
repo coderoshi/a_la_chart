@@ -1,6 +1,10 @@
 module ALaChartHelper
   require "erb"
   
+  def inline_chart_tag(chart_make, chart_style, args={})
+    chart_tag(chart_make, chart_style, args.merge(:inline => true))
+  end
+  
   def chart_tag(chart_make, chart_style, args={})
     width = args[:width] || 400
     height = args[:height] || 300
@@ -10,7 +14,7 @@ module ALaChartHelper
     
     chart_make = chart_make.to_sym
     
-    chart_make_config = ALaChart.config[chart_make]
+    chart_make_config = ALaChart::Config[chart_make]
     chart_make_version = chart_make_version || chart_make_config[:default]
     chart_make_config = chart_make_config[chart_make_version.to_sym]
     
@@ -38,11 +42,17 @@ module ALaChartHelper
     
     div_id = "#{name}_#{Time.now.to_f.to_s.gsub('.','_')}"
     
-    data_template = chart_type_config[:data]
-    data_template = File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template) if data_template.present?
+    data_template_path = chart_type_config[:data]
+    data_template = File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template_path) if data_template_path.present?
+    # If we cannot find the file, try it as a relative path
+    data_template = File.join(RAILS_ROOT, data_template_path) if data_template_path.present? && !File.exists?(data_template) && defined?(RAILS_ROOT)
     
-    inline = ERB.new(File.read(File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, template)))
-    inline.result(binding)
+    chart_template = File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, template)
+    # If we cannot find the file, try it as a relative path
+    chart_template = File.join(RAILS_ROOT, template) if !File.exists?(chart_template) && defined?(RAILS_ROOT)
+    
+    chart_template_erb = ERB.new(File.read(chart_template))
+    chart_template_erb.result(binding)
   end
   
   # TODO: REMOVE all of this stuff... make this all external configurations
