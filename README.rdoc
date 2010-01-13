@@ -113,7 +113,7 @@ The corresponding index.html.haml (or index.html.erb, or whatever) will look som
 
 Except for chart_tag, it's pretty normal. In the first chart we pass in the minimum required fields for chart_tag: the chart implementation (:google, :fusion, :raphael are the first to be supported, more to come), and the chart type (dependent on the implementation, see a_la_chart/configs/*/config.yml for the lists). The second pie chart is populated with the :gender pie data. ":case" is how we can support several styles of data for a single type of chart.
 
-== Multiple Chart Support
+=== Multiple Chart Support
 
 What if we want to display the city data as a :bar chart? There are two options. The first option, we can move the city data to a separate chart block. You can have as many chart blocks in a single controller as supported types. While we're at it, let's rename the query select names to be 'label' and 'value', to avoid the extra typing of remapping the data.
 
@@ -157,6 +157,29 @@ And in the view
 The above example shows the minimum configs required. However, certain configs are supported by all implementations, such as :width and :height.
 
   = chart_tag :fusion, :angular, :height => 300, :width => 300, :title => 'My Angular Chart'
+
+More to come...
+
+=== Overriding Config/Custom Configs
+
+More to come...
+
+== THEMING
+
+By default a la chart comes with no themes, and allows each framework to declare its own defaults. However, you probably want your charts to have a certain global look. The problem being that different frameworks have different configurations. For now, ALC does not attempt to replace the theming with any sort of universal mechanism (if you want a red pie chart for Fusion, and Google, you must create two themes).
+
+For example, Fusion Charts have rich customizability, which must be configured with the chart data. Fusion can be given a custom color palette (the ordered list of colors to be 'popped' for each data segment), and a set of default chart options (values that will appear in the xml data 'chart' tag).
+
+  ALaChart::Config[:fusion][:theme] = :my_theme
+  ALaChart::Config[:fusion][:themes][:my_theme] = {
+    :color_palette => [ '7BB465', 'B2B4B6', 'FEC35A', '65A4B5', '9E65B5', 'B57765', 'F7DF65' ],
+    :default_options => {
+      :useRoundEdges => '0',
+      :alpha => '100',
+      :bgColor => 'ffffff'
+    }
+  }
+
 
 More to come...
 
