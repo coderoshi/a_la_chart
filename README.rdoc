@@ -160,9 +160,47 @@ The above example shows the minimum configs required. However, certain configs a
 
 More to come...
 
-=== Overriding Config/Custom Configs
+=== CONFIGURATION
 
-More to come...
+=== Overriding Config
+
+Internal configs can be overridden in rails environment configs (eg. environment.rb). For example, to use a custom :inline ERB template (paths are based on RAILS_ROOT):
+
+  ALaChart::Config[:fusion][:v3_1][:pie][:data] = 'app/views/reports/a_la_chart/custom_inline.html.erb'
+
+Then just copy the original template from the gem config dir, and make the desired changes.
+
+=== Custom Templates
+
+NOTE: Creating custom templates can be complex and tie your project closely to a particular version of ALC. In short, caveat emptor, pal.
+
+Creating custom configs can be done just like overriding configs - just be sure you do not over write any existing chart data.
+
+For example, perhaps you want the Fusion Stacked Column chart to contain an HTML legend table to of your own design, but you do not want to overwrite the existing Stacked Column chart. You can create a new chart like this (similar to the YAML stacked_column config):
+
+  ALaChart::Config[:fusion][:v3_1][:legend_stacked_column] = {
+    :chart_type => 'StackedColumn2D',
+    :inline => 'app/views/a_la_charts/legend_stacked_column.html.erb'
+  }
+
+Next, copy the inline template from the a la chart config directory, place it in the path denoted by your :inline configuration, and paste your custom legend table at the end (or whatever changes you want), for example:
+
+  <table class="legend">
+    <tr>
+      <th colspan="2">Category</th>
+      <th>Total</th>
+    </tr>
+    <% color_palette_clear(:fusion, :stacked_column) %>
+    <% @totals.each do |total| %>
+      <tr>
+        <td style="background-color:#<%= color_palette_next(:fusion, :stacked_column) %>">&nbsp;</td>
+        <td><%= total[:category] %></td>
+        <td><%= total[:quantity] %></td>
+      </tr>
+    <% end %>
+  </table>
+
+'color_palette_clear' and 'color_palette_next' are a built-in functions to reset and pop color values from the color_palette stack. It is one of several built in helpers. View them all in a_la_chart_helper.rb, though note since they are still considered internal, they are subject to change from version to version. Again, caveat emptor.
 
 == THEMING
 
