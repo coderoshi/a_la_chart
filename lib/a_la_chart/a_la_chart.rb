@@ -100,8 +100,8 @@ module ALaChart
       
       self.before_filter(:provide_chart_data, :only => [:index, :show])
       
-      # Namespace this stuff??
-      [:data, :fields, :meta, :value, :set_chart].each do |method|
+      # TODO: Namespace this stuff??
+      [:before, :data, :fields, :meta, :value, :set_chart].each do |method|
         master_helper_module.module_eval <<-end_eval
           def #{method}(*args, &block)                    # def current_user(*args, &block)
             controller.send(%(#{method}), *args, &block)  #   controller.send(%(current_user), *args, &block)
@@ -140,6 +140,7 @@ module ALaChart
       
       if cases.blank?
         define_method("get_data") do
+          do_before_data if defined?(do_before_data)
           # note: instance_eval binds scope variables, call does not
           instance_eval(&block) || []
           # block.call(binding)
@@ -152,6 +153,11 @@ module ALaChart
       else
         cases.each { |caze|
           define_method("get_data_#{caze}") do
+            if respond_to?("do_before_data_#{caze}")
+              return [] unless send("do_before_data_#{caze}")
+            elsif defined?(do_before_data)
+              return [] unless do_before_data
+            end
             # note: instance_eval binds scope variables, call does not
             instance_eval(&block) || []
             # block.call(binding)
@@ -162,7 +168,25 @@ module ALaChart
         }
       end
     end
-  
+    
+    def before(*cases, &block)
+      if cases.blank?
+        define_method("do_before_data") do
+          # note: instance_eval binds scope variables, call does not
+          instance_eval(&block)
+          # block.call(binding)
+        end
+      else
+        cases.each { |caze|
+          define_method("do_before_data_#{caze}") do
+            # note: instance_eval binds scope variables, call does not
+            instance_eval(&block)
+            # block.call(binding)
+          end
+        }
+      end
+    end
+    
     def meta(*attrs)
       if attrs.size == 1
         attrs = attrs[0]
