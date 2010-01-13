@@ -160,7 +160,7 @@ The above example shows the minimum configs required. However, certain configs a
 
 More to come...
 
-=== CONFIGURATION
+== CONFIGURATION
 
 === Overriding Config
 
@@ -200,11 +200,11 @@ Next, copy the inline template from the a la chart config directory, place it in
     <% end %>
   </table>
 
-'color_palette_clear' and 'color_palette_next' are a built-in functions to reset and pop color values from the color_palette stack. It is one of several built in helpers. View them all in a_la_chart_helper.rb, though note since they are still considered internal, they are subject to change from version to version. Again, caveat emptor.
+'color_palette_clear' and 'color_palette_next' are a built-in functions to reset and pop color values from the color_palette stack. They are two of several built in helpers. View them all in a_la_chart_helper.rb. But note, since they are still considered internal, they are subject to change from version to version. Again, caveat emptor.
 
 == THEMING
 
-By default a la chart comes with no themes, and allows each framework to declare its own defaults. However, you probably want your charts to have a certain global look. The problem being that different frameworks have different configurations. For now, ALC does not attempt to replace the theming with any sort of universal mechanism (if you want a red pie chart for Fusion, and Google, you must create two themes).
+By default a la chart comes with no themes, and allows each framework to declare its own defaults. However, you probably want your charts to have a certain global look. The problem being that different frameworks have different configurations. For now, ALC does not attempt to replace the theming with any sort of universal mechanism (if you want a red pie chart for Fusion, and Google, you must create two themes). This may change in subsequent versions.
 
 For example, Fusion Charts have rich customizability, which must be configured with the chart data. Fusion can be given a custom color palette (the ordered list of colors to be 'popped' for each data segment), and a set of default chart options (values that will appear in the xml data 'chart' tag).
 
