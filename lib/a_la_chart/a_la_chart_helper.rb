@@ -40,7 +40,7 @@ module ALaChartHelper
     
     url += args.to_param
     
-    div_id = "#{name}_#{Time.now.to_f.to_s.gsub('.','_')}"
+    div_id = "#{name}#{Time.now.to_f.to_s.gsub('.','')}"
     
     data_template_path = chart_type_config[:data]
     data_template = File.join(File.dirname(__FILE__), '..', '..', 'configs', chart_make.to_s, chart_make_version.to_s, data_template_path) if data_template_path.present?
@@ -55,46 +55,32 @@ module ALaChartHelper
     chart_template_erb.result(binding)
   end
   
-  # TODO: REMOVE all of this stuff... make this all external configurations
-  def color_palette
-    ["7BB465","B2B4B6","FEC35A","65A4B5","9E65B5","B57765","F7DF65","8F866C","B6A65F","C99D60","C1727A","8AABB9","65B584"]
+  def color_palette(chart_make, chart_style=nil)
+    theme(chart_make)[:color_palette] || []
   end
-
-  def next_color
-    @colors ||= color_palette
-    @colors.pop
+  
+  def color_palette_clear(chart_make, chart_style=nil)
+    @color_palette_ary = color_palette(chart_make, chart_style).clone
   end
-
-  def chart_options
-    {
-      :animation => '1',
-      :showBorder => '0',
-      :canvasBorderThickness => '1',
-      :canvasBorderColor => 'eeeeee',
-      :divLineThickness => '1',
-      :bgAlpha => '0',
-      :useRoundEdges => '0',
-      :alpha => '100',
-      :bgColor => 'ffffff',
-      :shadowXShift=>"1",
-      :shadowYShift=>"1",
-      :shadowAlpha=>"75",
-      # :numberprefix => '$',
-      :showValues => '0',
-      :showSum => '1',
-      :enableSmartLabels => '1',
-      :skipOverlapLabels => '1',
-      :decimalPrecision => "2",
-      :captionPadding => '3',
-      :chartLeftMargin => '0',
-      :formatNumber => '1',
-      :formatNumberScale => '0',
-      :baseFont => 'Helvetica, Arial, sans-serif',
-      :baseFontSize => '11',
-      :baseFontColor => '515151',
-      :showToolTip => '1',
-      :toolTipBgColor => 'ffffff'
-    }
+  
+  def color_palette_next(chart_make, chart_style=nil)
+    @color_palette_ary ||= color_palette(chart_make, chart_style).clone
+    @color_palette_ary.pop
+  end
+  
+  # Merge with per-chart options
+  def chart_options(chart_make, chart_style=nil)
+    theme(chart_make)[:default_options] || {}
+  end
+  
+private
+  
+  def theme_name(chart_make)
+    ALaChart::Config[chart_make][:theme]
+  end
+  
+  def theme(chart_make)
+    ALaChart::Config[chart_make][:themes][theme_name(chart_make)] || {}
   end
   
 end

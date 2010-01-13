@@ -1,4 +1,7 @@
 default: v1_0
+theme: :none
+themes:
+  none: {}
 v1_0:
   pie:
     inline: 'pie.html.erb'

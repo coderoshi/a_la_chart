@@ -1,4 +1,7 @@
 default: v1_2
+theme: :none
+themes:
+  none: {}
 v1_2:
   format: js
   impact:

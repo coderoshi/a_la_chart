@@ -1,5 +1,4 @@
-xml.instruct!
-xml.chart(chart_options.merge(:upperLimit => params[:upperLimit] || 100, :caption => params[:title])) do
+xml.chart(chart_options(:fusion, :angular).merge(:upperLimit => params[:upperLimit] || 100, :caption => params[:title])) do
   the_case = params[:case]
   xml.colorRange do
     xml.color :minValue => '0', :maxValue => '2', :code => 'FF654F'

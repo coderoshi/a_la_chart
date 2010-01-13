@@ -1,4 +1,7 @@
 default: v3_1
+theme: :none
+themes:
+  none: {}
 v3_1:
   format: xml
   angular:
