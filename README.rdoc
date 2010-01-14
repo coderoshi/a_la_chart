@@ -10,9 +10,10 @@
 
 Note: very much in alpha development
 
-* Google Charts 1.0 (partial)
-* Fusion Charts 3.x (partial)
-* gRaphaël 1.2 (partial)
+* Google Charts 1.0 (partial) [http://code.google.com/apis/chart/]
+* Fusion Charts 3.x (partial) [http://www.fusioncharts.com/]
+* amCharts 1.6.4 (coming soon) [http://www.amcharts.com/]
+* gRaphaël 1.2 (coming soon) [http://g.raphaeljs.com/]
 
 == INSTALL:
 
