@@ -30,6 +30,8 @@ module ALaChartHelper
     append_url = chart_type_config[:url] || ".chart#{data_format}"
     url += "#{append_url}?"
     
+    options = args.delete(:options) || {}
+    
     explicit_args = args[:args].present? ? params.merge(args[:args]) : params
     args.reject!{ |k,v| [:name,:width,:height,:base_url].include?(k) }
     args.merge!(explicit_args)
@@ -37,6 +39,8 @@ module ALaChartHelper
     args.reject!{ |k,v| ['action','controller'].include?(k) }
     args[:cm] = chart_make.to_s
     args[:ct] = chart_style.to_s
+    # This feels a little too hacky for my taste... try better encoding
+    args[:co] = encode_options(options)
     
     url += args.to_param
     
@@ -55,6 +59,16 @@ module ALaChartHelper
     chart_template_erb.result(binding)
   end
   
+  def encode_options(options)
+    options.map{|k,v| "#{CGI::escape(k.to_s)}~#{CGI::escape(v.to_s)}"}.join("|")
+  end
+  
+  def decode_options(options_str)
+    hash = Hash[ *(options_str.to_s.split(/[|~]/)) ]
+    hash.each{|k,v| hash[CGI::unescape(k).to_sym] = CGI::unescape(hash.delete(k)) }
+    hash
+  end
+  
   def color_palette(chart_make, chart_style=nil)
     theme(chart_make)[:color_palette] || []
   end
@@ -68,9 +82,11 @@ module ALaChartHelper
     @color_palette_ary.pop
   end
   
-  # Merge with per-chart options
   def chart_options(chart_make, chart_style=nil)
-    theme(chart_make)[:default_options] || {}
+    default_options = theme(chart_make)[:default_options] || {}
+    options = decode_options(params[:co])
+    chart_style_options = (theme(chart_make)[:options] || {})[chart_style] || {}
+    default_options.merge(options).merge(chart_style_options)
   end
   
 private
