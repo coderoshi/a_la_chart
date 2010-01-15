@@ -65,7 +65,12 @@ module ALaChartHelper
   
   def decode_options(options_str)
     hash = Hash[ *(options_str.to_s.split(/[|~]/)) ]
-    hash.each{|k,v| hash[CGI::unescape(k.to_s).to_sym] = CGI::unescape(hash.delete(k.to_s)) }
+    hash.each{|k,v|
+      val = hash.delete(k)
+      if val && k.class == String && !k.blank?
+        hash[CGI::unescape(k).to_sym] = CGI::unescape(val.to_s)
+      end
+    }
     hash
   end
   
