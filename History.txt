@@ -1,3 +1,8 @@
+=== 0.1.6 2010-2-22
+
+* 1 enhancement:
+  * added separate tooltip mapping to certain fusion charts
+
 === 0.1.4 2010-1-14
 
 * 1 bug fix:
