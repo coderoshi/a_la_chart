@@ -1,2 +1,3 @@
 <% set_chart(:pie) %>
-<img src="http://chart.apis.google.com/chart?cht=p&chd=t:<%= data.map{|r| value(r, :value) }.join(',') %>&chs=<%= width %>x<%= height %>&chl=<%= data.map{|r| value(r, :label) }.join('|') %>&chtt=<%= args[:title] %>" width="<%= width %>" height="<%= height %>" />
+<% the_case = args && args[:case] || params[:case] %>
+<img src="http://chart.apis.google.com/chart?cht=p&chd=t:<%= data.map{|r| value(r, :value, the_case) }.join(',') %>&chs=<%= width %>x<%= height %>&chl=<%= data.map{|r| value(r, :label, the_case) }.join('|') %>&chtt=<%= args[:title] %>" width="<%= width %>" height="<%= height %>" />
