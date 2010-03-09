@@ -119,6 +119,10 @@ module ALaChart
     end
     
     def data(*attrs, &block)
+      # TODO: make this cooler
+      # options = Hash === args.last ? args.pop : {}
+      # version = args.last || ">= 0"
+      
       if attrs.size == 1
         attrs = attrs[0]
         if attrs.class == Hash

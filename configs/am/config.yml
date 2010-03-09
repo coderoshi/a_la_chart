@@ -1,0 +1,11 @@
+default: v1_6
+theme: :none
+themes:
+  none: {}
+v1_6:
+  format: xml
+  pie:
+    data: 'pie.xml.builder'
+    # chart_type: AngularGauge
+    remote: 'remote.html.erb'
+    inline: 'inline.html.erb'

@@ -1,0 +1,27 @@
+<%
+  require 'builder'
+  chart_type = chart_type_config[:chart_type]
+  chart_type = chart_style.to_s if chart_type.blank?
+  
+  chart_type = args[:vertical] ? chart_type_config[:vertical] || chart_type : chart_type
+  chart_type = args[:dimensions] == 3 ? chart_type_config[:d3] || chart_type : chart_type
+  
+  set_chart(chart_style)
+  
+  # TODO: create a seperate 'params' override
+  params[:case] = args[:case]
+  params[:title] = args[:title]
+%>
+<div>
+  <fusioncharts chartId="<%= div_id %>" 
+                chartType="<%= chart_type %>" 
+                swfPath="/FusionCharts/" 
+                width="<%= width %>" 
+                height="<%= height %>" 
+                registerWithJS="1" 
+                debugMode="0">
+    <data><!--[CDATA[
+      <%= render :file => data_template %>
+    ]]--></data>
+  </fusioncharts>
+</div>

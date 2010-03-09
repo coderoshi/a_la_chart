@@ -1,6 +1,10 @@
 xml.chart(chart_options(:fusion, :bar).merge(:caption => params[:title])) do
   the_case = params[:case]
   data(the_case).each do |record|
-    xml.set :value => value(record, :value, the_case), :label => value(record, :label, the_case), :link => value(record, :link, the_case), :color => color_palette_next(:fusion, :bar), :toolText => value(record, :tooltip, the_case)
+    xml.set(:value => value(record, :value, the_case),
+      :label => value(record, :label, the_case),
+      :link => value(record, :link, the_case),
+      :toolText => value(record, :tooltip, the_case),
+      :color => color_palette_next(:fusion, :bar))
   end
 end
