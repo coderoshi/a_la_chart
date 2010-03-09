@@ -1,18 +1,27 @@
 <%
   chart_type = chart_type_config[:chart_type]
   chart_type = chart_style.to_s if chart_type.blank?
+  chart_file = chart_type_config[:chart_file]
+  chart_settings = chart_type_config[:chart_settings]
   
   chart_type = args[:vertical] ? chart_type_config[:vertical] || chart_type : chart_type
   chart_type = args[:dimensions] == 3 ? chart_type_config[:d3] || chart_type : chart_type
 %>
-<div>
-  <fusioncharts chartId="<%= div_id %>" 
-                chartType="<%= chart_type %>" 
-                swfPath="/FusionCharts/" 
-                dataUrl="<%= CGI::escape(url) %>"
-                width="<%= width %>" 
-                height="<%= height %>" 
-                registerWithJS="1" 
-                debugMode="0">
-  </fusioncharts>
+<div id="<%= div_id %>">
+  <strong>You need to upgrade your Flash Player</strong>
 </div>
+<script type="text/javascript">
+// <![CDATA[		
+  var so = new SWFObject("/<%= chart_file %>", "<%= chart_type %>", "<%= width %>", "<%= height %>", "8", "#FFFFFF");
+  so.addVariable("path", "/<%= chart_type %>/");
+  so.addVariable("settings_file", escape("/<%= chart_settings %>"));  // you can set two or more different settings files here (separated by commas)
+  so.addVariable("data_file", escape("<%= url %>"));
+  // so.addVariable("chart_data", "");                                       // you can pass chart data as a string directly from this file
+  // so.addVariable("chart_settings", "");                                   // you can pass chart settings as a string directly from this file
+  // so.addVariable("additional_chart_settings", "");                        // you can append some chart settings to the loaded ones
+  // so.addVariable("loading_settings", "LOADING SETTINGS");                 // you can set custom "loading settings" text here
+  // so.addVariable("loading_data", "LOADING DATA");                         // you can set custom "loading data" text here
+  so.addVariable("preloader_color", "#999999");
+  so.write("<%= div_id %>");
+// ]]>
+</script>

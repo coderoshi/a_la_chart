@@ -1,10 +1,9 @@
-xml.chart(chart_options(:fusion, :pie).merge(:caption => params[:title])) do
+xml.pie do
   the_case = params[:case]
   data(the_case).each do |record|
-    xml.set(:value => value(record, :value, the_case),
-      :label => value(record, :label, the_case),
-      :link => value(record, :link, the_case),
-      :toolText => value(record, :tooltip, the_case),
-      :color => color_palette_next(:fusion, :pie))
+    xml.slice(value(record, :value, the_case), :title => value(record, :label, the_case),
+      :url => value(record, :link, the_case),
+      :description => value(record, :tooltip, the_case),
+      :alpha => color_palette_next(:am, :pie))
   end
 end

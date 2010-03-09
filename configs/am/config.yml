@@ -6,6 +6,8 @@ v1_6:
   format: xml
   pie:
     data: 'pie.xml.builder'
-    # chart_type: AngularGauge
+    chart_file: 'ampie/ampie.swf'
+    chart_type: 'ampie'
+    chart_settings: 'ampie/ampie_settings.xml'
     remote: 'remote.html.erb'
     inline: 'inline.html.erb'
