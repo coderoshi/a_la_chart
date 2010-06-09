@@ -5,3 +5,4 @@ themes:
 v1_0:
   pie:
     inline: 'pie.html.erb'
+    interactive: 'interactive.html.erb'

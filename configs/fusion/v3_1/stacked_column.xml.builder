@@ -12,7 +12,7 @@ xml.chart(chart_options(:fusion, :stacked_column).merge(:caption => params[:titl
   data_by_category.each do |category, records|
     xml.dataset(:seriesName => category, :color => value(records.first, :color, the_case) || color_palette_next(:fusion, :stacked_column)) do
       records.each do |record|
-        xml.set :value => value(record, :value, the_case)
+        xml.set :value => value(record, :value, the_case), :toolText => "#{category}, #{value(record, :value, the_case)}"
       end
     end
   end
