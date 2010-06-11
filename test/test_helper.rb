@@ -4,11 +4,11 @@
 
 require 'rubygems'
 
-gem 'responders', '0.6.0'
-gem 'activesupport', '3.0.0.beta2'
-gem 'activemodel', '3.0.0.beta2'
-gem 'actionpack', '3.0.0.beta2'
-gem 'railties', '3.0.0.beta2'
+gem 'responders', '0.6.1'
+gem 'activesupport', '3.0.0.beta3'
+gem 'activemodel', '3.0.0.beta3'
+gem 'actionpack', '3.0.0.beta3'
+gem 'railties', '3.0.0.beta3'
 
 begin
   gem "test-unit"

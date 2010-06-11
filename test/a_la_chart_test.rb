@@ -1,4 +1,7 @@
-require 'test_helper'
+# require 'test_helper'
+require File.join('/Users/eredmond/Code/a_la_chart', File.dirname(__FILE__), 'test_helper.rb')
+# require File.join(File.dirname(__FILE__), 'test_helper.rb')
+require 'active_support/core_ext/object/to_query'
 
 class Person
   extend ActiveModel::Naming
@@ -19,37 +22,22 @@ class PeopleController < ActionController::Base
   end
   
   def index
-    
   end
-#   respond_to :html, :xml
-#   respond_to :js, :only => [:create, :update, :destroy]
-#   attr_reader :scopes_applied
-# 
-# protected
-# 
-#   def apply_scopes(object)
-#     @scopes_applied = true
-#     object
-#   end
 end
+
+# ALaChartTest
 
 class BasicTest < ActionController::TestCase
   def setup
     @controller          = PeopleController.new
     @controller.request  = @request  = ActionController::TestRequest.new
-    # def @request.to_query; {}; end
     @controller.response = @response = ActionController::TestResponse.new
     @controller.stubs(:people_url).returns("/")
   end
   
   test "the truth" do
     get :index
-    # assert true
+    @controller.set_chart(:pie)
+    p @controller.data
   end
 end
-# class ALaChartTest < ActiveSupport::TestCase
-#   # Replace this with your real tests.
-#   test "the truth" do
-#     assert true
-#   end
-# end

@@ -1,4 +1,8 @@
 module ALaChart
+  extend ActiveSupport::Concern
+  included do
+    extlib_inheritable_accessor(:_helpers) { Module.new }
+  end
   
   module HelperMethods
     def meta(the_case=nil)
@@ -87,10 +91,12 @@ module ALaChart
     end
   end
   
-  def self.included(base)
-    base.extend(ClassMethods)
-  end
-  
+  # Check out "included {}" and ActiveSupport::Concern rather than "ClassMethods" - then can
+  # "include ALaChart::InstanceMethods" directly in Controllers directly
+  # def self.included(base)
+  #   base.extend(ClassMethods)
+  # end
+
   module ClassMethods
     
     def a_la_chart
@@ -104,8 +110,9 @@ module ALaChart
       # TODO: Namespace this stuff??
       # :meta, 
       [:before, :data, :value, :set_chart].each do |method|
+        # module_eval <<-end_eval
         # master_helper_module.module_eval <<-end_eval
-        module_eval <<-end_eval
+        _helpers.module_eval <<-end_eval
           def #{method}(*args, &block)                    # def data(*args, &block)
             controller.send(%(#{method}), *args, &block)  #   controller.send(%(data), *args, &block)
           end                                             # end
@@ -125,7 +132,6 @@ module ALaChart
       # TODO: make this cooler
       # options = Hash === args.last ? args.pop : {}
       # version = args.last || ">= 0"
-      
       if attrs.size == 1
         attrs = attrs[0]
         if attrs.class == Hash
