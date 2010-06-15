@@ -9,10 +9,11 @@ xml.chart(chart_options(:fusion, :stacked_column).merge(:caption => params[:titl
   data(the_case).each do |record|
     (data_by_category[value(record, :category, the_case)] ||= []) << record
   end
-  data_by_category.each do |category, records|
+  data_by_category.keys.sort.each do |category|
+    records = data_by_category[category]
     xml.dataset(:seriesName => category, :color => value(records.first, :color, the_case) || color_palette_next(:fusion, :stacked_column)) do
       records.each do |record|
-        xml.set :value => value(record, :value, the_case), :toolText => "#{category}, #{value(record, :value, the_case)}"
+        xml.set :value => value(record, :value, the_case), :toolText => "#{value(record, :category, the_case)}: #{'%0.2f' % value(record, :value, the_case)}"
       end
     end
   end
