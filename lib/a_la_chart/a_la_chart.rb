@@ -104,8 +104,9 @@ module ALaChart
       # TODO: Namespace this stuff??
       # :meta, 
       [:before, :data, :value, :set_chart].each do |method|
-        # master_helper_module.module_eval <<-end_eval
-        module_eval <<-end_eval
+        # TODO: swap this in Rails 3 and find a way to attach to helper
+        # module_eval <<-end_eval
+        master_helper_module.module_eval <<-end_eval
           def #{method}(*args, &block)                    # def data(*args, &block)
             controller.send(%(#{method}), *args, &block)  #   controller.send(%(data), *args, &block)
           end                                             # end
@@ -122,28 +123,27 @@ module ALaChart
     end
     
     def data(*attrs, &block)
-      # TODO: make this cooler
-      # options = Hash === args.last ? args.pop : {}
-      # version = args.last || ">= 0"
+      options = Hash === attrs.last ? attrs.pop : {}
+      cases = attrs
       
-      if attrs.size == 1
-        attrs = attrs[0]
-        if attrs.class == Hash
-          options = attrs
-        elsif attrs.class == Symbol || attrs.class == String
-          cases = [attrs]
-        end
-      elsif attrs.size > 1
-        if attrs[-1].class == Hash
-          cases = attrs[0...-1]
-          options = attrs[-1]
-        else
-          cases = attrs[0..-1]
-        end
-      end
-      
-      cases ||= []
-      options ||= {}
+      # if attrs.size == 1
+      #   attrs = attrs[0]
+      #   if attrs.class == Hash
+      #     options = attrs
+      #   elsif attrs.class == Symbol || attrs.class == String
+      #     cases = [attrs]
+      #   end
+      # elsif attrs.size > 1
+      #   if attrs[-1].class == Hash
+      #     cases = attrs[0...-1]
+      #     options = attrs[-1]
+      #   else
+      #     cases = attrs[0..-1]
+      #   end
+      # end
+      # 
+      # cases ||= []
+      # options ||= {}
       
       if cases.blank?
         define_method("get_data") do

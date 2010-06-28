@@ -1,5 +1,5 @@
 # module ALaChart
-#   VERSION = '0.1.6'
+#   VERSION = '0.1.7'
 # end
 module ALAChart
   autoload :VERSION, 'a_la_chart/version'
@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'a_la_chart', 'a_la_chart_helper')
 ActionController::Base.class_eval do
   include ALaChart
 end
-# ActionView::Base.send :include, ALaChartHelper
+ActionView::Base.send :include, ALaChartHelper
 
 Mime::Type.register "application/xml", :chartxml, %w( text/xml application/x-xml ) unless defined?(Mime::CHARTXML)
 Mime::Type.register "text/javascript", :chartjs, %w( application/javascript application/x-javascript ) unless defined?(Mime::CHARTJS)

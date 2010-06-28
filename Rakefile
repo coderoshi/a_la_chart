@@ -8,7 +8,7 @@ require File.join(File.dirname(__FILE__), 'lib', 'a_la_chart', 'version')
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
-    s.name = "inherited_resources"
+    s.name = "a_la_chart"
     s.version = ALaChart::VERSION.dup
     s.rubyforge_project = "a_la_chart"
     s.summary = "a La Chart manages various types of charting implementations - from grabbing the data, to declaring how those values are mapped to the desired type of chart (pie, line, bar, etc)."
@@ -16,14 +16,14 @@ begin
     s.homepage = "http://github.com/coderoshi/a_la_chart"
     s.description = "A framework for managing various types of charting implementations."
     s.authors = ['Eric Redmond']
-    s.files =  FileList["[A-Z]*", "init.rb", "{lib}/**/*"]
+    s.files =  FileList["[A-Z]*", "init.rb", "{lib}/**/*", "configs/**/*"]
     s.add_dependency("responders", "~> 0.6.0")
     s.add_dependency("has_scope",  "~> 0.5.0")
   end
 
   Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jeweler, or one of its dependencies, is not available. Install it with: sudo gem install technicalpickles-jeweler"
+  puts "Jeweler, or one of its dependencies, is not available. Install it with: sudo gem install jeweler"
 end
 
 desc 'Run tests for ALaChart.'
